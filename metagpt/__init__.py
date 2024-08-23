@@ -5,3 +5,5 @@
 # @File    : __init__.py
 
 from metagpt import _compat as _  # noqa: F401
+
+from .logs import logger, get_logger

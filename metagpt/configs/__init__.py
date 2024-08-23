@@ -5,3 +5,5 @@
 @Author  : alexanderwu
 @File    : __init__.py
 """
+
+from .log_config import LOG_CONFIG
