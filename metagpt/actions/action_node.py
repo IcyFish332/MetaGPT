@@ -424,7 +424,10 @@ class ActionNode:
         timeout=USE_CONFIG_TIMEOUT,
     ) -> (str, BaseModel):
         """Use ActionOutput to wrap the output of aask"""
-        content = await self.llm.aask(prompt, system_msgs, images=images, timeout=timeout)
+        if schema == "json":
+            content = await self.llm.aask(prompt, system_msgs, images=images, timeout=timeout, response_format={"type": "json_object"})
+        else:
+            content = await self.llm.aask(prompt, system_msgs, images=images, timeout=timeout)
         logger.debug(f"llm raw output:\n{content}")
         output_class = self.create_model_class(output_class_name, output_data_mapping)
 
