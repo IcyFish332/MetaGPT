@@ -50,10 +50,10 @@ from metagpt.const import METAGPT_ROOT
 
 from metagpt.configs import LOG_CONFIG
 
-def define_log_level(logfile_level="DEBUG", name: str = None, output_dir: str = None):
+def define_log_level(logfile_level="INFO", name: str = None, output_dir: str = None, debug: bool = False):
     """Define log level"""
     _logger.remove()
-    
+
     # 设置文件日志
     output_dir = output_dir or LOG_CONFIG["output_dir"]
     
@@ -63,16 +63,17 @@ def define_log_level(logfile_level="DEBUG", name: str = None, output_dir: str = 
     log_name = f"{name}_{current_time}" if name else current_time
     log_file = os.path.join(output_dir, f"{log_name}.log")
     
-    _logger.add(log_file, level=logfile_level)
+    file_level = "DEBUG" if debug else logfile_level
+    _logger.add(log_file, level=file_level)
     
     return _logger
 
 logger = define_log_level()
 
-def get_logger(name: str = None, output_dir: str = None):
+def get_logger(name: str = None, output_dir: str = None, debug: bool = False):
     """Get a configured logger"""
     global logger
-    logger = define_log_level(name=name, output_dir=output_dir)
+    logger = define_log_level(name=name, output_dir=output_dir, debug=debug)
     return logger
 
 def log_llm_stream(msg):
