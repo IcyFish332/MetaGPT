@@ -133,6 +133,7 @@ class BaseLLM(ABC):
         images: Optional[Union[str, list[str]]] = None,
         timeout=USE_CONFIG_TIMEOUT,
         stream=None,
+        **extra_kwargs
     ) -> str:
         if system_msgs:
             message = self._system_msgs(system_msgs)
@@ -149,7 +150,7 @@ class BaseLLM(ABC):
         if stream is None:
             stream = self.config.stream
         logger.debug(message)
-        rsp = await self.acompletion_text(message, stream=stream, timeout=self.get_timeout(timeout))
+        rsp = await self.acompletion_text(message, stream=stream, timeout=self.get_timeout(timeout), **extra_kwargs)
         return rsp
 
     def _extract_assistant_rsp(self, context):
@@ -195,12 +196,12 @@ class BaseLLM(ABC):
         retry_error_callback=log_and_reraise,
     )
     async def acompletion_text(
-        self, messages: list[dict], stream: bool = False, timeout: int = USE_CONFIG_TIMEOUT
+        self, messages: list[dict], stream: bool = False, timeout: int = USE_CONFIG_TIMEOUT, **extra_kwargs
     ) -> str:
         """Asynchronous version of completion. Return str. Support stream-print"""
         if stream:
-            return await self._achat_completion_stream(messages, timeout=self.get_timeout(timeout))
-        resp = await self._achat_completion(messages, timeout=self.get_timeout(timeout))
+            return await self._achat_completion_stream(messages, timeout=self.get_timeout(timeout), **extra_kwargs)
+        resp = await self._achat_completion(messages, timeout=self.get_timeout(timeout), **extra_kwargs)
         return self.get_choice_text(resp)
 
     def get_choice_text(self, rsp: dict) -> str:
